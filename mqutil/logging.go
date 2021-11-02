@@ -38,7 +38,7 @@ func NewStdLogger() *log.Logger {
 func NewFileLogger(path string) *log.Logger {
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0666)
 	if err != nil {
-		fmt.Printf("Can't open %s, err: %s", path, err.Error())
+		fmt.Printf("can't open %s, err: %s\n", path, err.Error())
 		return nil
 	}
 	return NewLogger(f)

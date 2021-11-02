@@ -186,7 +186,7 @@ func (dag *DAG) AddNode(node *DAGNode) error {
 
 func (dag *DAG) AdjustNodeWeight(node *DAGNode, newWeight int, depList []*DAGNode) error {
 	if dag.NameMap[node.Name] != node {
-		return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("changing the weight of a node that's not found in dag: %v", node))
+		return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("changing the weight of a node that's not found in dag: %v\n", node))
 	}
 	l := dag.WeightList[node.Weight]
 	for i, n := range l {
@@ -198,14 +198,14 @@ func (dag *DAG) AdjustNodeWeight(node *DAGNode, newWeight int, depList []*DAGNod
 			return node.AdjustChildrenWeight(depList)
 		}
 	}
-	return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("changing the weight of a node that's not found in dag: %v", node))
+	return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("changing the weight of a node that's not found in dag: %v\n", node))
 }
 
 type DAGIterFunc func(previous *DAGNode, current *DAGNode) error
 
 func (dag *DAG) IterateWeight(weight int, f DAGIterFunc) error {
 	if weight >= DAGDepth {
-		return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("invalid weight to iterate", weight))
+		return mqutil.NewError(mqutil.ErrInvalid, fmt.Sprintf("invalid weight to iterate %d\n", weight))
 	}
 	l := dag.WeightList[weight]
 	for _, n := range l {
