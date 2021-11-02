@@ -1,6 +1,8 @@
 GOARCH = amd64
 GOOS = darwin
 
+GOTEST = go test
+
 
 VERSION?=?
 COMMIT=$(shell git rev-parse HEAD)
@@ -29,12 +31,12 @@ windows: ## build windows mqgen and mqgo binaries
 bin/%: ## build binary - optons: mqgen or mqgo
 	GOOS=${GOOS} GOARCH=${GOARCH} go build ${LDFLAGS} -o bin/$(@F) ./$(basename $(@F))
 
-prereq:
+prereq: ## install gotest cli
 	go install github.com/rakyll/gotest
 
 # go test a specific package -v github.com/meqaio/swagger_meqa/mqutil -run TestMapIsCompatible
-test: prereq ## run unit tests
-	gotest -v -coverprofile=coverage.out ./...
+test: ## run unit tests
+	${GOTEST} -v -coverprofile=coverage.out ./...
 
 clean: ## clean binary output and coverage file
 	rm -Rf bin/* *.out

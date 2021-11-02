@@ -278,7 +278,7 @@ func main() {
 	mqutil.Logger.Println(os.Args)
 
 	if _, err := os.Stat(*swaggerFile); os.IsNotExist(err) {
-		fmt.Printf("can't load swagger file at the following location %s", *swaggerFile)
+		fmt.Printf("can't load swagger file at the following location %s\n", *swaggerFile)
 		os.Exit(1)
 	}
 
@@ -305,7 +305,7 @@ func runMeqa(meqaPath *string, swaggerFile *string, testPlanFile *string, result
 	}
 
 	if _, err := os.Stat(*testPlanFile); os.IsNotExist(err) {
-		fmt.Printf("can't load test plan file at the following location %s", *testPlanFile)
+		fmt.Printf("can't load test plan file at the following location %s\n", *testPlanFile)
 		return
 	}
 

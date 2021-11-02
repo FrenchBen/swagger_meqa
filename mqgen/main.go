@@ -40,14 +40,14 @@ func run(meqaPath *string, swaggerFile *string, algorithm *string, verbose *bool
 
 	swaggerJsonPath := *swaggerFile
 	if fi, err := os.Stat(swaggerJsonPath); os.IsNotExist(err) || fi.Mode().IsDir() {
-		fmt.Printf("Can't load swagger file at the following location %s", swaggerJsonPath)
+		fmt.Printf("can't load swagger file at the following location %s\n", swaggerJsonPath)
 		os.Exit(1)
 	}
 	whitelistPath := *whitelistFile
 	var whitelist map[string]bool
 	if len(whitelistPath) > 0 {
 		if fi, err := os.Stat(whitelistPath); os.IsNotExist(err) || fi.Mode().IsDir() {
-			fmt.Printf("Can't load whitelist file at the following location %s", whitelistPath)
+			fmt.Printf("can't load whitelist file at the following location %s\n", whitelistPath)
 			os.Exit(1)
 		}
 		wl, err := mqswag.GetWhitelistSuites(whitelistPath)
@@ -61,7 +61,7 @@ func run(meqaPath *string, swaggerFile *string, algorithm *string, verbose *bool
 	if fi, err := os.Stat(testPlanPath); os.IsNotExist(err) {
 		err = os.Mkdir(testPlanPath, 0755)
 		if err != nil {
-			fmt.Printf("Can't create the directory at %s\n", testPlanPath)
+			fmt.Printf("can't create the directory at %s\n", testPlanPath)
 			os.Exit(1)
 		}
 	} else if !fi.Mode().IsDir() {
