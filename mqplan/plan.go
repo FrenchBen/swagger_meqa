@@ -204,7 +204,7 @@ func (plan *TestPlan) DumpToFile(path string) error {
 		if len(testSuite.comment) > 0 {
 			WriteComment(testSuite.comment, f)
 		}
-		count, err := f.WriteString("---\n")
+		_, err = f.WriteString("---\n")
 		if err != nil {
 			return err
 		}
@@ -213,7 +213,7 @@ func (plan *TestPlan) DumpToFile(path string) error {
 		if err != nil {
 			return err
 		}
-		count, err = f.Write(caseBytes)
+		count, err := f.Write(caseBytes)
 		if count != len(caseBytes) || err != nil {
 			panic("writing test suite failed")
 		}

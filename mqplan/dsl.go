@@ -634,7 +634,7 @@ func (t *Test) ProcessResult(resp *resty.Response) error {
 			}
 		}
 		for className, resultArray := range collection {
-			objTag := mqswag.MeqaTag{className, "", "", 0}
+			objTag := mqswag.MeqaTag{Class: className, Property: "", Operation: "", Flags: 0}
 			for _, c := range resultArray {
 				t.AddObjectComparison(&objTag, c.(map[string]interface{}), (*spec.Schema)(t.db.GetSchema(className)))
 			}
@@ -1035,7 +1035,7 @@ func GetOperationByMethod(item *spec.PathItem, method string) *spec.Operation {
 	return nil
 }
 
-// GenerateParameter generates paramter value based on the spec.
+// GenerateParameter generates parameter value based on the spec.
 func (t *Test) GenerateParameter(paramSpec *spec.Parameter, db *mqswag.DB) (interface{}, error) {
 	tag := mqswag.GetMeqaTag(paramSpec.Description)
 	if paramSpec.Schema != nil {
@@ -1303,7 +1303,7 @@ func (t *Test) generateArray(name string, parentTag *mqswag.MeqaTag, schema *spe
 	if err != nil {
 		return nil, err
 	}
-	level = 0 // this will supress prints
+	level = 0 // this will suppress prints
 	for i := 0; i < numItems; i++ {
 		err = generateOneEntry()
 		if err != nil {
@@ -1387,7 +1387,7 @@ func (t *Test) GenerateSchema(name string, parentTag *mqswag.MeqaTag, schema *sp
 			}
 			return nil, nil
 		}
-		return t.GenerateSchema(name, &mqswag.MeqaTag{referenceName, "", "", 0}, (*spec.Schema)(referredSchema), db, level)
+		return t.GenerateSchema(name, &mqswag.MeqaTag{Class: referenceName, Property: "", Operation: "", Flags: 0}, (*spec.Schema)(referredSchema), db, level)
 	}
 
 	if len(schema.Enum) != 0 {
