@@ -16,15 +16,15 @@ default: help
 
 all: darwin linux windows
 
-darwin: vet lint ## build darwin mqgen and mqgo binaries
+darwin: ## build darwin mqgen and mqgo binaries
 	$(MAKE) GOOS=darwin bin/mqgo
 	$(MAKE) GOOS=darwin bin/mqgen
 
-linux: vet lint ## build linux mqgen and mqgo binaries
+linux: ## build linux mqgen and mqgo binaries
 	$(MAKE) GOOS=linux bin/mqgo
 	$(MAKE) GOOS=linux bin/mqgen
 
-windows: vet lint ## build windows mqgen and mqgo binaries
+windows: ## build windows mqgen and mqgo binaries
 	$(MAKE) GOOS=windows bin/mqgo.exe
 	$(MAKE) GOOS=windows bin/mqgen.exe
 
@@ -32,7 +32,7 @@ windows: vet lint ## build windows mqgen and mqgo binaries
 bin/%: ## build binary - optons: mqgen or mqgo
 	GOOS=${GOOS} GOARCH=${GOARCH} go build ${LDFLAGS} -o bin/$(@F) ./$(basename $(@F))
 
-install: vet lint ## install mqgen and mqgo
+install: ## install mqgen and mqgo
 	GOOS=${GOOS} GOARCH=${GOARCH} go install ${LDFLAGS} ./mqgo
 	GOOS=${GOOS} GOARCH=${GOARCH} go install ${LDFLAGS} ./mqgen
 
