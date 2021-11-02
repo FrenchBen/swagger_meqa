@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"meqa/mqutil"
 	"reflect"
 	"sync"
+
+	"github.com/meqaio/swagger_meqa/mqutil"
 
 	"github.com/go-openapi/spec"
 	"github.com/xeipuuv/gojsonschema"

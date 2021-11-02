@@ -1,6 +1,4 @@
-.idea
-.vscode
-bin
-pkg
-__pycache__
+.cache
+debug.test
 
+bin

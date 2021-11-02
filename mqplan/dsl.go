@@ -11,11 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/resty.v0"
+	"github.com/go-resty/resty/v2"
 
-	"meqa/mqswag"
-	"meqa/mqutil"
 	"reflect"
+
+	"github.com/meqaio/swagger_meqa/mqswag"
+	"github.com/meqaio/swagger_meqa/mqutil"
 
 	"encoding/json"
 
@@ -768,7 +769,10 @@ func (t *Test) Run(tc *TestSuite) error {
 		return err
 	}
 
-	req := resty.R()
+	// Create a Resty Client
+	client := resty.New()
+
+	req := client.R()
 	if len(tc.ApiToken) > 0 {
 		req.SetAuthToken(tc.ApiToken)
 	} else if len(tc.Username) > 0 {
@@ -1140,8 +1144,8 @@ func generateString(s *spec.Schema, prefix string) (string, error) {
 		return t.Format("2006-01-02"), nil
 	}
 	if s.Format == "uuid" {
-		u, err := uuid.NewV4()
-		return u.String(), err
+		u := uuid.NewV4()
+		return u.String(), nil
 	}
 	if s.Format == "email" {
 		s.Pattern = "^[a-z0-9]+@[a-z_]+?\\.[a-z]{2,3}$"

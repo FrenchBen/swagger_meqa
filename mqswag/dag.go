@@ -2,9 +2,10 @@ package mqswag
 
 import (
 	"fmt"
-	"meqa/mqutil"
 	"sort"
 	"strings"
+
+	"github.com/meqaio/swagger_meqa/mqutil"
 )
 
 const (

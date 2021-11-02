@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"meqa/mqplan"
 	"os"
 	"path/filepath"
 
-	"meqa/mqswag"
-	"meqa/mqutil"
+	"github.com/meqaio/swagger_meqa/mqplan"
+	"github.com/meqaio/swagger_meqa/mqswag"
+	"github.com/meqaio/swagger_meqa/mqutil"
 )
 
 const (

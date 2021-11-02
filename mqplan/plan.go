@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
-	"gopkg.in/resty.v0"
+	"github.com/go-resty/resty/v2"
 	"gopkg.in/yaml.v2"
 
-	"meqa/mqswag"
-	"meqa/mqutil"
+	"github.com/meqaio/swagger_meqa/mqswag"
+	"github.com/meqaio/swagger_meqa/mqutil"
 )
 
 const (
@@ -374,5 +374,7 @@ var History TestHistory
 
 func init() {
 	rand.Seed(int64(time.Now().Second()))
-	resty.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
+	// Create a Resty Client
+	client := resty.New()
+	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
 }

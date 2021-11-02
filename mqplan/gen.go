@@ -2,12 +2,12 @@ package mqplan
 
 import (
 	"fmt"
-	"meqa/mqswag"
-	"meqa/mqutil"
 	"sort"
 	"strings"
 
 	"github.com/go-openapi/spec"
+	"github.com/meqaio/swagger_meqa/mqswag"
+	"github.com/meqaio/swagger_meqa/mqutil"
 )
 
 func createInitTask() *Test {

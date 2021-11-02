@@ -10,13 +10,14 @@ import (
 	"os"
 	"strings"
 
-	"meqa/mqplan"
-	"meqa/mqswag"
-	"meqa/mqutil"
 	"path/filepath"
 
+	"github.com/meqaio/swagger_meqa/mqplan"
+	"github.com/meqaio/swagger_meqa/mqswag"
+	"github.com/meqaio/swagger_meqa/mqutil"
+
+	"github.com/go-resty/resty/v2"
 	uuid "github.com/satori/go.uuid"
-	"gopkg.in/resty.v0"
 	"gopkg.in/yaml.v2"
 )
 
@@ -49,7 +50,7 @@ func getConfigs(meqaPath string) (map[string]interface{}, error) {
 	configPath := filepath.Join(meqaPath, configFile)
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		u, _ := uuid.NewV4()
+		u := uuid.NewV4()
 		configMap[configAPIKey] = u.String()
 		err = writeConfigFile(configPath, configMap)
 		if err != nil {
@@ -93,9 +94,11 @@ UDqHH0wRogFg9n/9p69s/RcDdn6dW6Psdtvmxug28ExUQxYTkj/6ORmoiw==
 `
 	caPool.AppendCertsFromPEM([]byte(permCert))
 	config := tls.Config{RootCAs: caPool}
+	// Create a Resty Client
+	client := resty.New()
 
-	resty.SetTLSClientConfig(&config)
-	resty.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
+	client.SetTLSClientConfig(&config)
+	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
 
 	// Get the API key, if it doesn't exist, generate one.
 	configMap, err := getConfigs(meqaPath)
@@ -163,7 +166,7 @@ Do you wish to proceed? y/n: `
 	bodyMap["api_key"] = configMap[configAPIKey]
 	bodyMap["swagger"] = string(inputBytes)
 
-	req := resty.R()
+	req := client.R()
 	req.SetBody(bodyMap)
 	resp, err := req.Post(serverURL + "/specs")
 
@@ -322,9 +325,12 @@ func runMeqa(meqaPath *string, swaggerFile *string, testPlanFile *string, result
 		mqutil.Logger.Printf("Error loading test plan: %s", err.Error())
 	}
 
+	// Create a Resty Client
+	client := resty.New()
+
 	// for testing, set the config to skip verifying https certificates
-	resty.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-	resty.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
+	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
 
 	mqplan.Current.ResultCounts = make(map[string]int)
 	if *testToRun == "all" {

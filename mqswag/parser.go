@@ -4,11 +4,12 @@ package mqswag
 import (
 	"fmt"
 	"io/ioutil"
-	"meqa/mqutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/meqaio/swagger_meqa/mqutil"
 
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/loads/fmts"
