@@ -1,0 +1,111 @@
+# 
+# This test plan has test suites that are about objects. Each test suite create an object,
+# then exercise REST calls that use that object as an input.
+# 
+
+
+# The meqa_init section initializes parameters (e.g. pathParams) that are applied to all suites
+---
+meqa_init:
+- name: meqa_init
+
+
+---
+/user/createWithArray -- User -- all:
+- name: post_createUsersWithArrayInput_1
+  path: /user/createWithArray
+  method: post
+- name: get_getUserByName_2
+  path: /user/{username}
+  method: get
+- name: put_updateUser_3
+  path: /user/{username}
+  method: put
+- name: delete_deleteUser_4
+  path: /user/{username}
+  method: delete
+- name: post_createUsersWithArrayInput_5
+  path: /user/createWithArray
+  method: post
+
+
+---
+/user/createWithList -- User -- all:
+- name: post_createUsersWithListInput_1
+  path: /user/createWithList
+  method: post
+- name: get_getUserByName_2
+  path: /user/{username}
+  method: get
+- name: put_updateUser_3
+  path: /user/{username}
+  method: put
+- name: delete_deleteUser_4
+  path: /user/{username}
+  method: delete
+- name: post_createUsersWithListInput_5
+  path: /user/createWithList
+  method: post
+
+
+---
+/user -- User -- all:
+- name: post_createUser_1
+  path: /user
+  method: post
+- name: get_getUserByName_2
+  path: /user/{username}
+  method: get
+- name: put_updateUser_3
+  path: /user/{username}
+  method: put
+- name: delete_deleteUser_4
+  path: /user/{username}
+  method: delete
+- name: post_createUser_5
+  path: /user
+  method: post
+
+
+---
+/pet -- Pet -- all:
+- name: post_addPet_1
+  path: /pet
+  method: post
+- name: post_placeOrder_2
+  path: /store/order
+  method: post
+- name: put_updatePet_3
+  path: /pet
+  method: put
+- name: post_uploadFile_4
+  path: /pet/{petId}/uploadImage
+  method: post
+- name: get_getPetById_5
+  path: /pet/{petId}
+  method: get
+- name: post_updatePetWithForm_6
+  path: /pet/{petId}
+  method: post
+- name: delete_deletePet_7
+  path: /pet/{petId}
+  method: delete
+- name: post_addPet_8
+  path: /pet
+  method: post
+
+
+---
+/store/order -- Order -- all:
+- name: post_placeOrder_1
+  path: /store/order
+  method: post
+- name: get_getOrderById_2
+  path: /store/order/{orderId}
+  method: get
+- name: delete_deleteOrder_3
+  path: /store/order/{orderId}
+  method: delete
+- name: post_placeOrder_4
+  path: /store/order
+  method: post

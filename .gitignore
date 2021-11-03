@@ -16,3 +16,4 @@ debug.test
 
 # where we dump our current builds
 bin/
+outputdata/

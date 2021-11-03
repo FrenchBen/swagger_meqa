@@ -1,0 +1,136 @@
+# 
+# In this test plan, the test suites are the REST paths, and the tests are the different
+# operations under the path. The tests under the same suite will share each others'
+# parameters by default.
+# 	
+
+
+# The meqa_init section initializes parameters (e.g. pathParams) that are applied to all suites
+---
+meqa_init:
+- name: meqa_init
+
+
+---
+/user/createWithArray:
+- name: post_createUsersWithArrayInput_1
+  path: /user/createWithArray
+  method: post
+
+
+---
+/user/createWithList:
+- name: post_createUsersWithListInput_1
+  path: /user/createWithList
+  method: post
+
+
+---
+/pet/findByStatus:
+- name: get_findPetsByStatus_1
+  path: /pet/findByStatus
+  method: get
+
+
+---
+/pet/findByTags:
+- name: get_findPetsByTags_1
+  path: /pet/findByTags
+  method: get
+
+
+---
+/store/inventory:
+- name: get_getInventory_1
+  path: /store/inventory
+  method: get
+
+
+---
+/user/login:
+- name: get_loginUser_1
+  path: /user/login
+  method: get
+
+
+---
+/user/logout:
+- name: get_logoutUser_1
+  path: /user/logout
+  method: get
+
+
+---
+/user:
+- name: post_createUser_1
+  path: /user
+  method: post
+- name: get_getUserByName_2
+  path: /user/{username}
+  method: get
+- name: put_updateUser_3
+  path: /user/{username}
+  method: put
+- name: delete_deleteUser_4
+  path: /user/{username}
+  method: delete
+- name: get_getUserByName_5
+  path: /user/{username}
+  method: get
+  expect:
+    status: fail
+  pathParams:
+    username: '{{delete_deleteUser_4.pathParams.username}}'
+
+
+---
+/pet/{petId}/uploadImage:
+- name: post_uploadFile_1
+  path: /pet/{petId}/uploadImage
+  method: post
+
+
+---
+/pet:
+- name: post_addPet_1
+  path: /pet
+  method: post
+- name: post_updatePetWithForm_2
+  path: /pet/{petId}
+  method: post
+- name: get_getPetById_3
+  path: /pet/{petId}
+  method: get
+- name: put_updatePet_4
+  path: /pet
+  method: put
+- name: delete_deletePet_5
+  path: /pet/{petId}
+  method: delete
+- name: post_updatePetWithForm_6
+  path: /pet/{petId}
+  method: post
+  expect:
+    status: fail
+  pathParams:
+    petId: '{{delete_deletePet_5.pathParams.petId}}'
+
+
+---
+/store/order:
+- name: post_placeOrder_1
+  path: /store/order
+  method: post
+- name: get_getOrderById_2
+  path: /store/order/{orderId}
+  method: get
+- name: delete_deleteOrder_3
+  path: /store/order/{orderId}
+  method: delete
+- name: get_getOrderById_4
+  path: /store/order/{orderId}
+  method: get
+  expect:
+    status: fail
+  pathParams:
+    orderId: '{{delete_deleteOrder_3.pathParams.orderId}}'

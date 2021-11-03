@@ -1,0 +1,45 @@
+# 
+# This is a simple and short test plan. We just sampled up to 10 REST calls into one test suite.
+# 
+
+
+# The meqa_init section initializes parameters (e.g. pathParams) that are applied to all suites
+---
+meqa_init:
+- name: meqa_init
+
+
+# The meqa_init task within a test suite initializes parameters that are applied to all tests within this suite
+---
+simple test suite:
+- name: meqa_init
+- name: post_createUsersWithArrayInput_1
+  path: /user/createWithArray
+  method: post
+- name: post_createUsersWithListInput_2
+  path: /user/createWithList
+  method: post
+- name: post_createUser_3
+  path: /user
+  method: post
+- name: get_findPetsByStatus_4
+  path: /pet/findByStatus
+  method: get
+- name: get_findPetsByTags_5
+  path: /pet/findByTags
+  method: get
+- name: get_getInventory_6
+  path: /store/inventory
+  method: get
+- name: get_loginUser_7
+  path: /user/login
+  method: get
+- name: get_logoutUser_8
+  path: /user/logout
+  method: get
+- name: post_addPet_9
+  path: /pet
+  method: post
+- name: get_getUserByName_10
+  path: /user/{username}
+  method: get

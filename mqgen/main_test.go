@@ -11,8 +11,9 @@ import (
 func TestMqgen(t *testing.T) {
 	mqutil.Logger = mqutil.NewStdLogger()
 	wd, _ := os.Getwd()
-	meqaPath := filepath.Join(wd, "../../../testdata")
-	swaggerPath := filepath.Join(meqaPath, "petstore_meqa.yml")
+	testDataPath := filepath.Join(wd, "../testdata")
+	meqaPath := t.TempDir()
+	swaggerPath := filepath.Join(testDataPath, "petstore_meqa.yaml")
 	algorithm := "all"
 	verbose := false
 	whitelistPath := ""

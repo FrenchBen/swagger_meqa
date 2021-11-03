@@ -10,10 +10,11 @@ import (
 
 func TestMqgo(t *testing.T) {
 	wd, _ := os.Getwd()
-	meqaPath := filepath.Join(wd, "../../../testdata")
-	swaggerPath := filepath.Join(meqaPath, "petstore_meqa.yml")
-	planPath := filepath.Join(meqaPath, "object.yml")
-	resultPath := filepath.Join(meqaPath, "result.yml")
+	// Use pre-generated data to confirm working
+	meqaPath := filepath.Join(wd, "../testdata")
+	swaggerPath := filepath.Join(meqaPath, "petstore_meqa.yaml")
+	planPath := filepath.Join(meqaPath, "object.yaml")
+	resultPath := filepath.Join(meqaPath, "result.yaml")
 	testToRun := "all"
 	username := ""
 	password := ""

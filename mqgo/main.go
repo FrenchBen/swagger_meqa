@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -23,8 +24,8 @@ import (
 
 const (
 	meqaDataDir = "meqa_data"
-	configFile  = ".config.yml"
-	resultFile  = "result.yml"
+	configFile  = ".config.yaml"
+	resultFile  = "result.yaml"
 	serverURL   = "https://api.meqa.io"
 )
 
@@ -69,7 +70,7 @@ func getConfigs(meqaPath string) (map[string]interface{}, error) {
 	return configMap, nil
 }
 
-func generateMeqa(meqaPath string, swaggerPath string) error {
+func generateMeqa(meqaPath string, swaggerPath string, meqaTerms bool) error {
 	caPool := x509.NewCertPool()
 	permCert := `-----BEGIN CERTIFICATE-----
 MIIDVzCCAj+gAwIBAgIJAJOCmHT8l8H6MA0GCSqGSIb3DQEBCwUAMEIxCzAJBgNV
@@ -97,6 +98,9 @@ UDqHH0wRogFg9n/9p69s/RcDdn6dW6Psdtvmxug28ExUQxYTkj/6ORmoiw==
 	// Create a Resty Client
 	client := resty.New()
 
+	// Enable debugging
+	client.SetDebug(true)
+
 	client.SetTLSClientConfig(&config)
 	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
 
@@ -123,18 +127,18 @@ the https://api.meqa.io service you are agreeing to our Terms and Conditions
 located at: https://github.com/meqaio/swagger_meqa/blob/master/TERMS.md.
 
 Do you wish to proceed? y/n: `
-	if acceptedTerm == nil {
+	if acceptedTerm == nil && !meqaTerms {
 		fmt.Print(warning)
 		var answer string
 		fmt.Scanln(&answer)
 		if answer != "y" {
 			os.Exit(1)
 		}
-		configMap[configAcceptedTerm] = true
-		err = writeConfigFile(filepath.Join(meqaPath, configFile), configMap)
-		if err != nil {
-			return err
-		}
+	}
+	configMap[configAcceptedTerm] = true
+	err = writeConfigFile(filepath.Join(meqaPath, configFile), configMap)
+	if err != nil {
+		return err
 	}
 
 	inputBytes, err := ioutil.ReadFile(swaggerPath)
@@ -168,6 +172,9 @@ Do you wish to proceed? y/n: `
 
 	req := client.R()
 	req.SetBody(bodyMap)
+
+	log.Printf("Full client: %#v", req)
+
 	resp, err := req.Post(serverURL + "/specs")
 
 	if status := resp.StatusCode(); status >= 300 {
@@ -184,16 +191,16 @@ Do you wish to proceed? y/n: `
 		return fmt.Errorf("server call failed, status %d, body:\n%s", resp.StatusCode(), string(resp.Body()))
 	}
 
-	// output file name is the input swagger spec name + _meqa.yml, if there isn't a _meqa already
+	// output file name is the input swagger spec name + _meqa.yaml, if there isn't a _meqa already
 	_, inputFile := filepath.Split(swaggerPath)
-	swaggerMeqaPath := filepath.Join(meqaPath, strings.TrimSuffix(strings.Split(inputFile, ".")[0], "_meqa")+"_meqa.yml")
+	swaggerMeqaPath := filepath.Join(meqaPath, strings.TrimSuffix(strings.Split(inputFile, ".")[0], "_meqa")+"_meqa.yaml")
 	fmt.Printf("Writing tagged swagger spec to: %s\n", swaggerMeqaPath)
 	err = ioutil.WriteFile(swaggerMeqaPath, []byte(respMap["swagger_meqa"].(string)), 0644)
 	if err != nil {
 		return err
 	}
 	for planName, planBody := range respMap["test_plans"].(map[string]interface{}) {
-		planPath := filepath.Join(meqaPath, planName+".yml")
+		planPath := filepath.Join(meqaPath, planName+".yaml")
 		fmt.Printf("Writing test suites file to: %s\n", planPath)
 		err = ioutil.WriteFile(planPath, []byte(planBody.(string)), 0644)
 		if err != nil {
@@ -210,13 +217,16 @@ func main() {
 	runCommand := flag.NewFlagSet("run", flag.ExitOnError)
 	runCommand.SetOutput(os.Stdout)
 
+	// Generate command flags
 	genMeqaPath := genCommand.String("d", meqaDataDir, "the directory where meqa config, log and output files reside")
 	genSwaggerFile := genCommand.String("s", "", "the OpenAPI (Swagger) spec file path")
+	meqaTerms := genCommand.Bool("y", false, "automatically accept terms")
 
+	// Run command flags
 	runMeqaPath := runCommand.String("d", meqaDataDir, "the directory where meqa config, log and output files reside")
 	runSwaggerFile := runCommand.String("s", "", "the meqa generated OpenAPI (Swagger) spec file path")
 	testPlanFile := runCommand.String("p", "", "the test plan file name")
-	resultPath := runCommand.String("r", "", "the test result file name (default result.yml in meqa_data dir)")
+	resultPath := runCommand.String("r", "", "the test result file name (default result.yaml in meqa_data dir)")
 	testToRun := runCommand.String("t", "all", "the test to run")
 	username := runCommand.String("u", "", "the username for basic HTTP authentication")
 	password := runCommand.String("w", "", "the password for basic HTTP authentication")
@@ -257,13 +267,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	fi, err := os.Stat(*meqaPath)
-	if os.IsNotExist(err) {
-		fmt.Printf("Meqa directory %s doesn't exist.", *meqaPath)
-		os.Exit(1)
-	}
-	if !fi.Mode().IsDir() {
-		fmt.Printf("Meqa directory %s is not a directory.", *meqaPath)
+	if err := os.MkdirAll(*meqaPath, os.ModePerm); err != nil {
+		fmt.Printf("Error creating directory %s\n", *meqaPath)
 		os.Exit(1)
 	}
 
@@ -283,8 +288,7 @@ func main() {
 	}
 
 	if genCommand.Parsed() {
-		err = generateMeqa(*meqaPath, *swaggerFile)
-		if err != nil {
+		if err := generateMeqa(*meqaPath, *swaggerFile, *meqaTerms); err != nil {
 			fmt.Printf("got an err:\n%s", err.Error())
 			os.Exit(1)
 		}
@@ -309,7 +313,7 @@ func runMeqa(meqaPath *string, swaggerFile *string, testPlanFile *string, result
 		return
 	}
 
-	// load swagger.yml
+	// load swagger.yaml
 	swagger, err := mqswag.CreateSwaggerFromURL(*swaggerFile, *meqaPath)
 	if err != nil {
 		mqutil.Logger.Printf("Error: %s", err.Error())
